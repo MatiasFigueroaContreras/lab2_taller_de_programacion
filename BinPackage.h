@@ -5,9 +5,12 @@ class BinPackage
 private:
 	std::vector<Bin> bins;
 	int length;
+
 public:
 	BinPackage(int length, int capacity);
 	~BinPackage();
 	bool insert(int element, int index);
-	bool equals(BinPackage *bins);
+	int getBinsValue();
+	bool equals(BinPackage *binPackage);
+	void print();
 };

@@ -1,38 +1,32 @@
-#include "SetW.h"
+#include "Bin.h"
 
 int main()
 {
-	SetW *s = new SetW(7);
-	std::cout << "Insert 1: " << s->insert(3) << std::endl;
-	s->print();
-	std::cout << "Insert 2: " << s->insert(4) << std::endl;
-	s->print();
-	std::cout << "Insert 3: " << s->insert(6) << std::endl;
-	s->print();
+	Bin *b1 = new Bin(7);
+	std::cout << "Insert 1, Estado: " << b1->insert(3) << std::endl;
+	b1->print();
+	std::cout << std::endl;
+	std::cout << "Insert 2, Estado: " << b1->insert(4) << std::endl;
+	b1->print();
+	std::cout << std::endl;
+	std::cout << "Insert 3, Estado: " << b1->insert(6) << std::endl;
+	b1->print();
+	std::cout << std::endl;
 
-	std::vector<SetW> v;
-	SetW *c;
-	for(int i = 0; i < 3; i++)
-	{
-		c = new SetW(7);
-		v.push_back(*c);
-	}
+	Bin *b2 = new Bin(7);
 
-	std::vector<SetW>::iterator itr;
+	b2->insert(3);
+	b2->insert(4);
 
-	v[0].insert(3);
-	v[0].insert(4);
+	Bin *b3 = new Bin(7);
 
-	v[1].insert(7);
+	b3->insert(5);
+	b3->insert(2);
 
-	v[2].insert(5);
-	v[2].insert(2);
+	std::cout << "Equals 1: " << b2->equals(b1) << std::endl;
+	std::cout << "Equals 2: " << b3->equals(b1) << std::endl;
 
-	std::cout << "Equals 1: " << v[0].equals(&v[1]) << std::endl;
-	std::cout << "Equals 2: " << v[0].equals(s) << std::endl;
-
-	for(itr = v.begin(); itr != v.end(); itr++)
-	{
-		itr->print();
-	}
+	std::cout << "Value b1: " << b1->getValue() << std::endl;
+	std::cout << "Value b2: " << b2->getValue() << std::endl;
+	std::cout << "Value b3: " << b3->getValue() << std::endl;
 }

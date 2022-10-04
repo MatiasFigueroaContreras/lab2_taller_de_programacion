@@ -6,13 +6,16 @@ class Bin
 {
 private:
 	int weight;
-	int maxWeight;
+	int capacity;
 	int numValue;
 	std::vector<int> items;
+
 public:
-	Bin(int maxWeight);
+	Bin(int capacity);
 	~Bin();
 	bool insert(int item);
-	bool equals(Bin *set);
+	int getValue();
+	bool equals(Bin *bin);
 	void print();
+	
 };
