@@ -2,6 +2,9 @@ FLAGS = -g -Wall
 
 all: clean test_Bin test_BinPackage test_BinPackingSolver run
 
+main: main.cpp
+	g++ $(FLAGS) -o main main.cpp
+
 test_Bin: Bin.o test_Bin.cpp
 	g++ $(FLAGS) -o test_Bin Bin.o test_Bin.cpp
 
@@ -21,7 +24,7 @@ BinPackingSolver.o: BinPackingSolver.cpp BinPackingSolver.h
 	g++ $(FLAGS) -c BinPackingSolver.cpp
 
 clean:
-	rm -f test_Bin test_BinPackage test_BinPackingSolver *.o
+	rm -f test_Bin test_BinPackage test_BinPackingSolver main *.o
 
 run:
 	./test_Bin

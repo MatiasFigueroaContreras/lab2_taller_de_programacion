@@ -18,7 +18,6 @@ Bin::Bin(int capacity)
 {
 	this->capacity = capacity;
 	this->weight = 0;
-	this->numValue = 0;
 }
 
 Bin::~Bin()
@@ -40,16 +39,7 @@ bool Bin::insert(int item)
 {
 	if (capacity >= weight + item)
 	{
-		items.push_back(item);
-		if (item == 1 || weight == 0)
-		{
-			numValue += item;
-		}
-		else
-		{
-			numValue *= item;
-		}
-
+		items.insert(item);
 		weight += item;
 		return true;
 	}
@@ -63,8 +53,17 @@ bool Bin::insert(int item)
 		entero que representa al bin.
 	Retorno: entero que representa al bin.
 */
-int Bin::getValue()
+long int Bin::getValue()
 {
+	std::multiset<int>::iterator itr;
+	long int mult = 1;
+	long int numValue = 0;
+	for (itr = items.begin(); itr != items.end(); itr++)
+	{
+		numValue += *itr * mult;
+		mult *= 100;
+	}
+
 	return numValue;
 }
 
@@ -80,7 +79,48 @@ int Bin::getValue()
 */
 bool Bin::equals(Bin *bin)
 {
-	return bin->getValue() == this->getValue();
+	return bin->items == this->items;
+}
+
+Bin *Bin::copy()
+{
+	Bin *binCopy = new Bin(this->capacity);
+	std::multiset<int>::iterator itr;
+
+	binCopy->items = this->items;
+	// for (itr = items.begin(); itr != items.end(); itr++)
+	// {
+	// 	binCopy->insert(*itr);
+	// }
+	binCopy->weight = this->weight;
+	
+	return binCopy;
+}
+
+/*
+	Metodo:
+	Descripcion: este metodo permite representar el
+		Bin en un string, incluyendo el contenido de este.
+	Retorno:
+		string, que representa el bin.
+*/
+std::string Bin::toString()
+{
+	std::multiset<int>::iterator itr;
+	std::string str = "{";
+	if (items.size() != 0)
+	{
+		itr = items.begin();
+		str.append(std::to_string(*itr));
+		for (itr++; itr != items.end(); itr++)
+		{
+			str.append(", ");
+			str.append(std::to_string(*itr));
+		}
+	}
+	str.append("}");
+
+	return str;
 }
 
 /*
@@ -92,15 +132,5 @@ bool Bin::equals(Bin *bin)
 */
 void Bin::print()
 {
-	std::vector<int>::iterator itr;
-	std::cout << "{";
-	if (items.size() != 0)
-	{
-		for (itr = items.begin(); itr + 1 != items.end(); itr++)
-		{
-			std::cout << *itr << ", ";
-		}
-		std::cout << *itr;
-	}
-	std::cout << "}";
+	std::cout << this->toString();
 }

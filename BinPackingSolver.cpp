@@ -17,7 +17,93 @@ BinPackingSolver::~BinPackingSolver()
 
 int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 {
-    return 0;
+    int mid;
+    std::sort(elements.begin(), elements.end(), std::greater<int>());
+    int upper = upperBound(elements, capacity);
+    int lower = lowerBound(elements, capacity);
+
+    std::cout << "Cota superior: " << upper << ", Cota Inferior: " << lower << std::endl;
+
+    while (upper > lower)
+    {
+        mid = (upper + lower) / 2;
+        if(hasSolution(elements, capacity, mid))
+        {
+            upper = mid;
+        }
+        else
+        {
+            if(lower == mid)
+            {
+                return lower + 1;
+            }
+
+            lower = mid;
+        }
+    }
+    
+    return lower;
+}
+
+bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int numBins)
+{
+    std::unordered_map<std::string, BinPackage*> visitedCombinations;
+    std::map<int, BinPackage*, std::greater<int>> binPackagesToVisit;
+    std::map<int, BinPackage*, std::greater<int>>::iterator currentMapItr;
+    int currentPos;
+    bool isInserted;
+    std::string copyBPKey;
+    BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
+
+    visitedCombinations.reserve(10000); // cambiar por cantidad maxima de combinaciones
+
+    binPackagesToVisit.emplace(0, initialBP);
+    visitedCombinations.emplace(initialBP->toString(), initialBP);
+    std::cout << "========================================" << std::endl;
+    while (!binPackagesToVisit.empty())
+    {
+        currentMapItr = binPackagesToVisit.begin();
+        currentBP = currentMapItr->second;
+        currentPos = currentMapItr->first;
+        std::cout << "------------------------" << std::endl;
+        std::cout << "Valor a ingresar:  " <<  elements[currentPos] << ", Bin Package a combinar:" << std::endl;
+        currentBP->print();
+        for (int i = 0; i < currentBP->length; i++)
+        {
+            copyBP = currentBP->copy();
+            isInserted = copyBP->insert(elements[currentPos], i);
+            copyBPKey = copyBP->toString(); // Inecesario si se ocupa directamente insert en visitedCombinations y se verifica si se pudo insertar
+
+            if (isInserted && visitedCombinations.find(copyBPKey) == visitedCombinations.end())
+            {
+                std::cout << "Combinacion Nueva nPos°" << i + 1 << ": " << std::endl;
+                copyBP->print();
+                if (currentPos + 1 == (int) elements.size())
+                {
+                    std::cout << "Si es posible con: " << numBins << " numero de bins" << std::endl;
+                    copyBP->print();
+                    std::cout << "========================================" << std::endl;
+                    deleteBinPackagesGenerated(visitedCombinations);
+                    delete copyBP;
+                    return true;
+                }
+
+                visitedCombinations.emplace(copyBPKey, copyBP);
+                binPackagesToVisit.emplace(currentPos + 1, copyBP);
+            }
+            else
+            {
+                delete copyBP;
+            }
+        }
+        std::cout << "------------------------" << std::endl;
+        binPackagesToVisit.erase(currentMapItr);
+    }
+    std::cout << "No es posible con: " << numBins << " numero de bins" << std::endl;
+    std::cout << "========================================" << std::endl;
+    deleteBinPackagesGenerated(visitedCombinations);
+
+    return false;
 }
 
 /*
@@ -35,6 +121,7 @@ std::vector<int> BinPackingSolver::generateElements(int numElements, int capacit
 {
     int element;
     std::vector<int> elements;
+    elements.reserve(numElements);
     std::srand(time(NULL));
     for (int i = 0; i < numElements; i++)
     {
@@ -45,12 +132,48 @@ std::vector<int> BinPackingSolver::generateElements(int numElements, int capacit
     return elements;
 }
 
-int BinPackingSolver::upperLimit(std::vector<int> elements, int capacity)
+int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
 {
-    return 0;
+    int j;
+    std::vector<int>::iterator itr;
+    BinPackage *binPackage = new BinPackage(1, capacity);
+
+    for (itr = elements.begin(); itr != elements.end(); itr++)
+    {
+        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++)
+        {
+        }
+
+        if (j == binPackage->length)
+        {
+            binPackage->insertBin();
+            binPackage->insert(*itr, j);
+        }
+    }
+
+    int length = binPackage->length;
+    delete binPackage;
+
+    return length;
 }
 
-int BinPackingSolver::lowerLimit(std::vector<int> elements, int capacity)
+int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
 {
-    return 0;
+    int sum = 0;
+    std::vector<int>::iterator itr;
+    for (itr = elements.begin(); itr != elements.end(); itr++)
+    {
+        sum += *itr;
+    }
+
+    return (sum / capacity);
+}
+
+void BinPackingSolver::deleteBinPackagesGenerated(std::unordered_map<std::string, BinPackage *> binPackages)
+{
+    std::unordered_map<std::string, BinPackage *>::iterator itr;
+    for(itr = binPackages.begin(); itr != binPackages.end(); itr++)
+    {
+        delete itr->second;
+    }
 }

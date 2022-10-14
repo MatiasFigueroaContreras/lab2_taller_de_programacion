@@ -18,14 +18,21 @@
 BinPackage::BinPackage(int length, int capacity)
 {
 	this->length = length;
+	this->capacity = capacity;
 	for (int i = 0; i < length; i++)
 	{
-		bins.push_back(Bin(capacity));
+		bins.push_back(new Bin(capacity));
+		binsOrdered.insert("{}");
 	}
 }
 
 BinPackage::~BinPackage()
 {
+	std::vector<Bin *>::iterator itr;
+	for(itr = bins.begin(); itr != bins.end(); itr++)
+	{
+		delete *itr;
+	}
 }
 
 /*
@@ -46,7 +53,24 @@ bool BinPackage::insert(int element, int index)
 		return false;
 	}
 
-	return bins[index].insert(element);
+	std::string key = bins[index]->toString();
+	if (!bins[index]->insert(element))
+	{
+		return false;
+	}
+
+	auto node = binsOrdered.extract(key);
+	node.value() = bins[index]->toString();
+	binsOrdered.insert(std::move(node));
+
+	return true;
+}
+
+void BinPackage::insertBin()
+{
+	bins.push_back(new Bin(capacity));
+	binsOrdered.insert("{}");
+	length++;
 }
 
 /*
@@ -55,12 +79,13 @@ bool BinPackage::insert(int element, int index)
 		entero que representa al Bin Package.
 	Retorno: entero que representa al Bin Package.
 */
-int BinPackage::getBinsValue()
+long int BinPackage::getBinsValue()
 {
-	int value = 0;
-	for (int i = 0; i < length; i++)
+	std::vector<Bin *>::iterator itr;
+	long int value = 0;
+	for (itr = bins.begin(); itr != bins.end(); itr++)
 	{
-		value += bins[i].getValue();
+		value += (*itr)->getValue();
 	}
 
 	return value;
@@ -78,7 +103,50 @@ int BinPackage::getBinsValue()
 */
 bool BinPackage::equals(BinPackage *binPackage)
 {
-	return binPackage->getBinsValue() == this->getBinsValue();
+	return binPackage->binsOrdered == this->binsOrdered;
+}
+
+BinPackage *BinPackage::copy()
+{
+	BinPackage *binPackageCopy = new BinPackage(0, this->capacity);
+	std::vector<Bin *>::iterator itr;
+	Bin *binCopy;
+	for (itr = bins.begin(); itr != bins.end(); itr++)
+	{
+		binCopy = (*itr)->copy();
+		binPackageCopy->bins.push_back(binCopy);
+		binPackageCopy->binsOrdered.insert(binCopy->toString()); //Mejorable
+	}
+	
+	binPackageCopy->length = this->length;
+
+	return binPackageCopy;
+}
+
+/*
+	Metodo:
+	Descripcion: este metodo permite representar el
+		Bin en un string, incluyendo el contenido de este.
+	Retorno:
+		string, que representa el bin.
+*/
+std::string BinPackage::toString()
+{
+	std::multiset<std::string>::iterator itr;
+	std::string str = "{";
+	if (length != 0)
+	{
+		itr = binsOrdered.begin();
+		str.append(*itr);
+		for (itr++; itr != binsOrdered.end(); itr++)
+		{
+			str.append(", ");
+			str.append(*itr);
+		}
+	}
+	str.append("}");
+
+	return str;
 }
 
 /*
@@ -90,13 +158,5 @@ bool BinPackage::equals(BinPackage *binPackage)
 */
 void BinPackage::print()
 {
-	std::vector<Bin>::iterator itr;
-	std::cout << "{";
-	for (itr = bins.begin(); itr + 1 != bins.end(); itr++)
-	{
-		itr->print();
-		std::cout << ", ";
-	}
-	itr->print();
-	std::cout << "}" << std::endl;
+	std::cout << this->toString() << std::endl;
 }

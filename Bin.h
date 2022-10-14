@@ -1,5 +1,6 @@
 #include <iostream>
-#include <vector>
+#include <string>
+#include <set>
 #include <iterator>
 
 class Bin
@@ -7,15 +8,16 @@ class Bin
 private:
 	int weight;
 	int capacity;
-	int numValue;
-	std::vector<int> items;
+	std::multiset<int> items;
 
 public:
 	Bin(int capacity);
 	~Bin();
 	bool insert(int item);
-	int getValue();
+	long int getValue();
 	bool equals(Bin *bin);
+	Bin *copy();
+	std::string toString();
 	void print();
 	
 };
