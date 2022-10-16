@@ -48,11 +48,9 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int numBins)
 {
     std::unordered_map<std::string, BinPackage*> visitedCombinations;
-    std::map<int, BinPackage*, std::greater<int>> binPackagesToVisit;
-    std::map<int, BinPackage*, std::greater<int>>::iterator currentMapItr;
+    std::multimap<int, BinPackage*, std::greater<int>> binPackagesToVisit;
+    std::multimap<int, BinPackage*, std::greater<int>>::iterator currentMapItr;
     int currentPos;
-    bool isInserted;
-    std::string copyBPKey;
     BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
 
     visitedCombinations.reserve(10000); // cambiar por cantidad maxima de combinaciones
@@ -68,13 +66,11 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
         std::cout << "------------------------" << std::endl;
         std::cout << "Valor a ingresar:  " <<  elements[currentPos] << ", Bin Package a combinar:" << std::endl;
         currentBP->print();
+        binPackagesToVisit.erase(currentMapItr);
         for (int i = 0; i < currentBP->length; i++)
         {
             copyBP = currentBP->copy();
-            isInserted = copyBP->insert(elements[currentPos], i);
-            copyBPKey = copyBP->toString(); // Inecesario si se ocupa directamente insert en visitedCombinations y se verifica si se pudo insertar
-
-            if (isInserted && visitedCombinations.find(copyBPKey) == visitedCombinations.end())
+            if (copyBP->insert(elements[currentPos], i) && visitedCombinations.emplace(copyBP->toString(), copyBP).second)
             {
                 std::cout << "Combinacion Nueva nPos°" << i + 1 << ": " << std::endl;
                 copyBP->print();
@@ -88,7 +84,6 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
                     return true;
                 }
 
-                visitedCombinations.emplace(copyBPKey, copyBP);
                 binPackagesToVisit.emplace(currentPos + 1, copyBP);
             }
             else
@@ -97,7 +92,6 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
             }
         }
         std::cout << "------------------------" << std::endl;
-        binPackagesToVisit.erase(currentMapItr);
     }
     std::cout << "No es posible con: " << numBins << " numero de bins" << std::endl;
     std::cout << "========================================" << std::endl;
