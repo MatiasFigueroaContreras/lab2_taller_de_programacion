@@ -1,9 +1,9 @@
-FLAGS = -g -Wall
+FLAGS = -O2 -g -Wall
 
 all: clean test_Bin test_BinPackage test_BinPackingSolver run
 
-main: main.cpp
-	g++ $(FLAGS) -o main main.cpp
+main: main.cpp BinPackingSolver.o BinPackage.o Bin.o
+	g++ $(FLAGS) -o main BinPackingSolver.o BinPackage.o Bin.o main.cpp
 
 test_Bin: Bin.o test_Bin.cpp
 	g++ $(FLAGS) -o test_Bin Bin.o test_Bin.cpp

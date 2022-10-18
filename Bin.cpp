@@ -82,16 +82,20 @@ bool Bin::equals(Bin *bin)
 	return bin->items == this->items;
 }
 
+/*
+	Metodo:
+	Descripcion: este metodo permite copiar el objeto con sus
+		respectivos valores.
+	Parametros: No tiene.
+	Retorno: La direccion del objeto creado con los valores
+		del objeto copiado.
+*/
 Bin *Bin::copy()
 {
 	Bin *binCopy = new Bin(this->capacity);
 	std::multiset<int>::iterator itr;
 
 	binCopy->items = this->items;
-	// for (itr = items.begin(); itr != items.end(); itr++)
-	// {
-	// 	binCopy->insert(*itr);
-	// }
 	binCopy->weight = this->weight;
 	
 	return binCopy;

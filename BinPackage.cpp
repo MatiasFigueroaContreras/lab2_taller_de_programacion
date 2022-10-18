@@ -26,6 +26,12 @@ BinPackage::BinPackage(int length, int capacity)
 	}
 }
 
+/*
+	Metodo: Destructor
+	Descripcion: este metodo permite eliminar el BinPackage,
+		liberando la memoria de los Bin que esta posee.
+	Retorno: vacio.
+*/
 BinPackage::~BinPackage()
 {
 	std::vector<Bin *>::iterator itr;
@@ -66,6 +72,14 @@ bool BinPackage::insert(int element, int index)
 	return true;
 }
 
+/*
+	Metodo:
+	Descripcion: este metodo permite insertar un nuevo 
+		Bin vacio.
+	Parametros: No tiene.
+	Retorno: No posee.
+		
+*/
 void BinPackage::insertBin()
 {
 	bins.push_back(new Bin(capacity));
@@ -106,6 +120,14 @@ bool BinPackage::equals(BinPackage *binPackage)
 	return binPackage->binsOrdered == this->binsOrdered;
 }
 
+/*
+	Metodo:
+	Descripcion: este metodo permite copiar el objeto con sus
+		respectivos valores.
+	Parametros: No tiene.
+	Retorno: La direccion del objeto creado con los valores
+		del objeto copiado.
+*/
 BinPackage *BinPackage::copy()
 {
 	BinPackage *binPackageCopy = new BinPackage(0, this->capacity);

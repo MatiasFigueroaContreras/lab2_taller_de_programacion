@@ -1,50 +1,36 @@
-#include <iostream>
-#include <map>
-#include <vector>
-#include <iterator>
+#include <ctime>
+#include "BinPackingSolver.h"
 
 int main()
 {
-    std::multimap<int, int> myMap;
-    std::multimap<int, int>::iterator itr1;
-    std::multimap<int, int>::iterator itrMain;
+    clock_t ti, tf;
+    double dt = 0, tavg = 0;
+    int N = 0;
+    int num_elements, capacity;
 
-    std::vector<std::multimap<int, int>::iterator> itrs;
-    
+    BinPackingSolver *solver = new BinPackingSolver();
+    std::vector<int> elements;
 
-
-    itr1 = myMap.emplace(1, 1);
-    itrs.push_back(itr1);
-    itr1 = myMap.emplace(4, 4);
-    itrs.push_back(itr1);
-    myMap.emplace(2, 20);
-    myMap.emplace(5, 5);
-    myMap.emplace(6, 6);
-    
-    for(int i = 0; i < itrs.size(); i++)
+    std::cout << "Ingrese el numero de elementos con el que se trabajara: ";
+    std::cin >> num_elements;
+    std::cout << "Ingrese la capacidad con la que se trabajara: ";
+    std::cin >> capacity;
+    std::cout << "Ingrese cantidad de ciclos: ";
+    std::cin >> N;
+    std::cout << "Se ejecutaran " << N << " ciclos" << std::endl;
+    for (int i = 0; i < N; i++)
     {
-        std::cout << itrs[i]->first << " -> " << itrs[i]->second << " | ";
+        elements = solver->generateElements(num_elements, capacity);
+        ti = clock();
+        solver->solve(elements, capacity);
+        tf = clock();
+        dt = (tf - ti) / (double)CLOCKS_PER_SEC;
+        tavg += dt;
+        std::cout << "Tiempo de ejecucion: " << dt << " segundos" << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << "Tiempo promedio: " << tavg / N << " segundos" << std::endl;
 
-    std::cout << itr1->first << " -> " << itr1->second << std::endl;
+    delete solver;
 
-    for (itrMain = myMap.begin(); itrMain != myMap.end(); itrMain++)
-    {
-        std::cout << itrMain->first << " -> " << itrMain->second << " | ";
-    }
-    std::cout << std::endl;
-
-    auto x = myMap.extract(2);
-
-    std::cout << x.key() << " -> " << x.mapped() << std::endl;
-
-    for (itrMain = myMap.begin(); itrMain != myMap.end(); itrMain++)
-    {
-        std::cout << itrMain->first << " -> " << itrMain->second << " | ";
-    }
-    std::cout << std::endl;
-
-    std::cout << itr1->first << " -> " << itr1->second << std::endl;
-
+    return 0;
 }

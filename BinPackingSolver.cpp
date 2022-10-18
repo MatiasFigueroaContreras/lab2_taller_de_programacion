@@ -15,6 +15,16 @@ BinPackingSolver::~BinPackingSolver()
 {
 }
 
+/*
+    Metodo:
+    Descripcion: este metodo permite resolver un problema
+        de Bin Packing, buscando el numero optimo de Bins
+        a generar con los elementos y la capacidad entregados.
+    Parametros:
+        -elements: elementos que se repartiran en los Bins.
+        -capacity: maxima capacidad que tendran los Bins.
+    Retorno: Numero optimo de Bins dado las entradas.
+*/
 int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 {
     int mid;
@@ -45,6 +55,22 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
     return lower;
 }
 
+/*
+    Metodo:
+    Descripcion: este metodo permite saber si dado los elementos,
+        la capacidad y el numero de bins establecidos, es posible
+        generar un Bin Packing, es decir que se utilizen todos
+        los elementos.
+    Parametros:
+        -elements: elementos que se repartiran en los Bins.
+        -capacity: maxima capacidad que tendran los Bins.
+        -numBIns: numero de bins establecidos que tendra el BinPacking.
+    Retorno:
+        -true: si es posible generar un Bin Package utilizando todos
+            los elementos.
+        -false: si NO es posible generar un Bin Package utilizando todos
+            los elementos.
+*/
 bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int numBins)
 {
     std::unordered_map<std::string, BinPackage*> visitedCombinations;
@@ -80,7 +106,6 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
                     copyBP->print();
                     std::cout << "========================================" << std::endl;
                     deleteBinPackagesGenerated(visitedCombinations);
-                    delete copyBP;
                     return true;
                 }
 
@@ -126,6 +151,17 @@ std::vector<int> BinPackingSolver::generateElements(int numElements, int capacit
     return elements;
 }
 
+/*
+    Metodo:
+    Descripcion: este metodo permite obtener el numero de
+        Bins maximo que se pueden tener en base a los elementos
+        y la capacidad maxima de los bins.
+    Parametros:
+        -elements: elementos que se repartiran en los Bins.
+        -capacity: maxima capacidad que tendran los Bins.
+    Retorno:
+        numero de bins maximo.
+*/
 int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
 {
     int j;
@@ -134,9 +170,7 @@ int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
 
     for (itr = elements.begin(); itr != elements.end(); itr++)
     {
-        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++)
-        {
-        }
+        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++){}
 
         if (j == binPackage->length)
         {
@@ -151,6 +185,17 @@ int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
     return length;
 }
 
+/*
+    Metodo:
+    Descripcion: este metodo permite obtener el numero de
+        Bins minimo que se pueden tener en base a los elementos
+        y la capacidad maxima de los bins.
+    Parametros:
+        -elements: elementos que se repartiran en los Bins.
+        -capacity: maxima capacidad que tendran los Bins.
+    Retorno:
+        numero de bins minimo.
+*/
 int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
 {
     int sum = 0;
@@ -163,6 +208,16 @@ int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
     return (sum / capacity);
 }
 
+/*
+    Metodo:
+    Descripcion: este metodo permite eliminar los BinPackage 
+        que contiene la estructura de entrada, liberando asi
+        memoria.
+    Parametros:
+        -binPackages: estructura que contiene los BinPackage
+            a eliminar.
+    Retorno: Vacio.
+*/
 void BinPackingSolver::deleteBinPackagesGenerated(std::unordered_map<std::string, BinPackage *> binPackages)
 {
     std::unordered_map<std::string, BinPackage *>::iterator itr;
