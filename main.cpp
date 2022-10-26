@@ -18,6 +18,7 @@ int main()
     std::cout << "Ingrese cantidad de ciclos: ";
     std::cin >> N;
     std::cout << "Se ejecutaran " << N << " ciclos" << std::endl;
+    std::srand(time(NULL));
     for (int i = 0; i < N; i++)
     {
         elements = solver->generateElements(num_elements, capacity);

@@ -3,7 +3,7 @@
     Descripcion de la clase BinPackingSolver:
     Esta clase buscara resolver un problema de Bin Packing
     teniendo metodos referentes a la solucion del problema,
-    y ademas la generacion de elementos de prueba para 
+    y ademas la generacion de elementos de prueba para
     probar el solucionador.
 */
 
@@ -29,6 +29,12 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 {
     int mid;
     std::sort(elements.begin(), elements.end(), std::greater<int>());
+    std::cout << elements[0];
+    for (int i = 1; i < (int) elements.size(); i++)
+    {
+        std::cout << ", " << elements[i];
+    }
+    std::cout << std::endl;
     int upper = upperBound(elements, capacity);
     int lower = lowerBound(elements, capacity);
 
@@ -37,13 +43,13 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
     while (upper > lower)
     {
         mid = (upper + lower) / 2;
-        if(hasSolution(elements, capacity, mid))
+        if (hasSolution(elements, capacity, mid))
         {
             upper = mid;
         }
         else
         {
-            if(lower == mid)
+            if (lower == mid)
             {
                 return lower + 1;
             }
@@ -51,7 +57,7 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
             lower = mid;
         }
     }
-    
+
     return lower;
 }
 
@@ -62,7 +68,7 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
         generar un Bin Packing, es decir que se utilizen todos
         los elementos.
     Parametros:
-        -elements: elementos que se repartiran en los Bins.
+        -elements: elementos que se repartiran en los Bins (Ordenados en solve).
         -capacity: maxima capacidad que tendran los Bins.
         -numBIns: numero de bins establecidos que tendra el BinPacking.
     Retorno:
@@ -73,13 +79,13 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 */
 bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int numBins)
 {
-    std::unordered_map<std::string, BinPackage*> visitedCombinations;
-    std::multimap<int, BinPackage*, std::greater<int>> binPackagesToVisit;
-    std::multimap<int, BinPackage*, std::greater<int>>::iterator currentMapItr;
+    std::unordered_map<std::string, BinPackage *> visitedCombinations;
+    std::multimap<int, BinPackage *, std::greater<int>> binPackagesToVisit;
+    std::multimap<int, BinPackage *, std::greater<int>>::iterator currentMapItr;
     int currentPos;
     BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
 
-    visitedCombinations.reserve(10000); // cambiar por cantidad maxima de combinaciones
+    visitedCombinations.reserve(1000000); // cambiar por cantidad maxima de combinaciones
 
     binPackagesToVisit.emplace(0, initialBP);
     visitedCombinations.emplace(initialBP->toString(), initialBP);
@@ -90,7 +96,7 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
         currentBP = currentMapItr->second;
         currentPos = currentMapItr->first;
         std::cout << "------------------------" << std::endl;
-        std::cout << "Valor a ingresar:  " <<  elements[currentPos] << ", Bin Package a combinar:" << std::endl;
+        std::cout << "Valor a ingresar:  " << elements[currentPos] << ", Bin Package a combinar:" << std::endl;
         currentBP->print();
         binPackagesToVisit.erase(currentMapItr);
         for (int i = 0; i < currentBP->length; i++)
@@ -100,7 +106,7 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
             {
                 std::cout << "Combinacion Nueva nPos°" << i + 1 << ": " << std::endl;
                 copyBP->print();
-                if (currentPos + 1 == (int) elements.size())
+                if (currentPos + 1 == (int)elements.size())
                 {
                     std::cout << "Si es posible con: " << numBins << " numero de bins" << std::endl;
                     copyBP->print();
@@ -126,14 +132,14 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
 }
 
 /*
-    Metodo: 
+    Metodo:
     Descripcion: este metodo permite generar una lista
         de elementos aleatorios dado una capacidad,
         y la cantidad de elementos que va a tener la lista.
     Parametros:
         -numElements: cantidad de elementos que tendra la lista.
         -capacity: valor maximo que tendran los elementos aleatorios
-    Retorno: 
+    Retorno:
         la lista de enteros generada.
 */
 std::vector<int> BinPackingSolver::generateElements(int numElements, int capacity)
@@ -141,7 +147,6 @@ std::vector<int> BinPackingSolver::generateElements(int numElements, int capacit
     int element;
     std::vector<int> elements;
     elements.reserve(numElements);
-    std::srand(time(NULL));
     for (int i = 0; i < numElements; i++)
     {
         element = 1 + std::rand() % capacity;
@@ -157,7 +162,7 @@ std::vector<int> BinPackingSolver::generateElements(int numElements, int capacit
         Bins maximo que se pueden tener en base a los elementos
         y la capacidad maxima de los bins.
     Parametros:
-        -elements: elementos que se repartiran en los Bins.
+        -elements: elementos que se repartiran en los Bins (Ordenados en solve).
         -capacity: maxima capacidad que tendran los Bins.
     Retorno:
         numero de bins maximo.
@@ -170,7 +175,7 @@ int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
 
     for (itr = elements.begin(); itr != elements.end(); itr++)
     {
-        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++){}
+        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++);
 
         if (j == binPackage->length)
         {
@@ -191,26 +196,71 @@ int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
         Bins minimo que se pueden tener en base a los elementos
         y la capacidad maxima de los bins.
     Parametros:
-        -elements: elementos que se repartiran en los Bins.
+        -elements: elementos que se repartiran en los Bins (Ordenados en solve).
         -capacity: maxima capacidad que tendran los Bins.
     Retorno:
         numero de bins minimo.
 */
 int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
 {
-    int sum = 0;
+    int lb;
     std::vector<int>::iterator itr;
-    for (itr = elements.begin(); itr != elements.end(); itr++)
+    int alpha = elements.back();
+    if (alpha <= capacity / 2)
     {
-        sum += *itr;
+        int num_j1 = 0;
+        int num_j2 = 0;
+        int sum_j2 = 0;
+        int sum_j3 = 0;
+        for (itr = elements.begin(); itr != elements.end() && *itr > capacity - alpha; itr++)
+        {
+            num_j1++;
+        }
+        for (; itr != elements.end() && *itr > capacity / 2; itr++)
+        {
+            sum_j2 += *itr;
+            num_j2++;
+        }
+        for (; itr != elements.end() && *itr >= alpha; itr++)
+        {
+            sum_j3 += *itr;
+        }
+        float fop = (float)(sum_j3 - (num_j2 * capacity - sum_j2)) / capacity;
+        int op = fop;
+        if (op < fop)
+        {
+            op++;
+        }
+
+        if (op < 0)
+        {
+            op = 0;
+        }
+
+        lb = num_j1 + num_j2 + op;
+    }
+    else
+    {
+        int sum = 0;
+        for (itr = elements.begin(); itr != elements.end(); itr++)
+        {
+            sum += *itr;
+        }
+
+        float flb = (float)sum / capacity;
+        lb = flb;
+        if (lb < flb)
+        {
+            lb++;
+        }
     }
 
-    return (sum / capacity);
+    return lb;
 }
 
 /*
     Metodo:
-    Descripcion: este metodo permite eliminar los BinPackage 
+    Descripcion: este metodo permite eliminar los BinPackage
         que contiene la estructura de entrada, liberando asi
         memoria.
     Parametros:
@@ -221,7 +271,7 @@ int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
 void BinPackingSolver::deleteBinPackagesGenerated(std::unordered_map<std::string, BinPackage *> binPackages)
 {
     std::unordered_map<std::string, BinPackage *>::iterator itr;
-    for(itr = binPackages.begin(); itr != binPackages.end(); itr++)
+    for (itr = binPackages.begin(); itr != binPackages.end(); itr++)
     {
         delete itr->second;
     }
