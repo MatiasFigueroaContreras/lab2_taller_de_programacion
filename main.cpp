@@ -6,7 +6,7 @@ int main()
     clock_t ti, tf;
     double dt = 0, tavg = 0;
     int N = 0;
-    int num_elements, capacity;
+    int num_elements, capacity, sol;
 
     BinPackingSolver *solver = new BinPackingSolver();
     std::vector<int> elements;
@@ -23,11 +23,13 @@ int main()
     {
         elements = solver->generateElements(num_elements, capacity);
         ti = clock();
-        solver->solve(elements, capacity);
+        sol = solver->solve(elements, capacity);
+        std::cout << "Resultado: " << sol << std::endl;
         tf = clock();
         dt = (tf - ti) / (double)CLOCKS_PER_SEC;
         tavg += dt;
         std::cout << "Tiempo de ejecucion: " << dt << " segundos" << std::endl;
+        
     }
     std::cout << "Tiempo promedio: " << tavg / N << " segundos" << std::endl;
 

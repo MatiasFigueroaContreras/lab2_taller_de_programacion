@@ -1,24 +1,26 @@
-#include "Bin.h"
+#include <iostream>
 #include <vector>
+#include <set>
+#include <string>
 #include <map>
 #include <algorithm>
 
 class BinPackage
 {
 private:
-	std::vector<Bin*> bins;
-	std::multiset<std::string> binsOrdered;
+    std::vector<int> bins;
+    std::multiset<int> binsOrdered;
 
 public:
-	int length;
-	int capacity;
-	BinPackage(int length, int capacity);
-	~BinPackage();
-	bool insert(int element, int index);
-	void insertBin();
-	long int getBinsValue();
-	bool equals(BinPackage *binPackage);
-	BinPackage *copy();
-	std::string toString();
-	void print();
+    int length;
+    int capacity;
+    BinPackage(int length, int capacity);
+    ~BinPackage();
+    bool insert(int element, int index);
+    void insertBin();
+    std::string getValue();
+    BinPackage *copy();
+    std::string toString();
+    void print();
+
 };

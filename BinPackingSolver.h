@@ -1,4 +1,5 @@
 #include "BinPackage.h"
+#include <unordered_set>
 #include <utility>
 
 class BinPackingSolver
@@ -6,7 +7,7 @@ class BinPackingSolver
 private:
 	int upperBound(std::vector<int> elements, int capacity);
 	int lowerBound(std::vector<int>  elements, int capacity);
-	void deleteBinPackagesGenerated(std::unordered_map<std::string, BinPackage *> binPackages);
+	void deleteRemainingBinPackages(std::multimap<int, BinPackage *, std::greater<int>> binPackages);
 
 public:
 	BinPackingSolver();

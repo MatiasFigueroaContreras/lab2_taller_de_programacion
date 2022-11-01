@@ -79,16 +79,21 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 */
 bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int numBins)
 {
-    std::unordered_map<std::string, BinPackage *> visitedCombinations;
+    std::vector<std::unordered_set<std::string>> visitedCombinations;
     std::multimap<int, BinPackage *, std::greater<int>> binPackagesToVisit;
     std::multimap<int, BinPackage *, std::greater<int>>::iterator currentMapItr;
     int currentPos;
     BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
 
-    visitedCombinations.reserve(1000000); // cambiar por cantidad maxima de combinaciones
+    for(int i = 0; i < (int) elements.size(); i++)
+    {
+        std::unordered_set<std::string> us;
+        us.reserve(10000);
+        visitedCombinations.push_back(us);
+    }
 
     binPackagesToVisit.emplace(0, initialBP);
-    visitedCombinations.emplace(initialBP->toString(), initialBP);
+    visitedCombinations[0].insert(initialBP->getValue());
     std::cout << "========================================" << std::endl;
     while (!binPackagesToVisit.empty())
     {
@@ -102,7 +107,7 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
         for (int i = 0; i < currentBP->length; i++)
         {
             copyBP = currentBP->copy();
-            if (copyBP->insert(elements[currentPos], i) && visitedCombinations.emplace(copyBP->toString(), copyBP).second)
+            if (copyBP->insert(elements[currentPos], i) && visitedCombinations[currentPos].insert(copyBP->getValue()).second)
             {
                 std::cout << "Combinacion Nueva nPos°" << i + 1 << ": " << std::endl;
                 copyBP->print();
@@ -111,7 +116,7 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
                     std::cout << "Si es posible con: " << numBins << " numero de bins" << std::endl;
                     copyBP->print();
                     std::cout << "========================================" << std::endl;
-                    deleteBinPackagesGenerated(visitedCombinations);
+                    deleteRemainingBinPackages(binPackagesToVisit);
                     return true;
                 }
 
@@ -122,11 +127,11 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
                 delete copyBP;
             }
         }
+        delete currentBP;
         std::cout << "------------------------" << std::endl;
     }
     std::cout << "No es posible con: " << numBins << " numero de bins" << std::endl;
     std::cout << "========================================" << std::endl;
-    deleteBinPackagesGenerated(visitedCombinations);
 
     return false;
 }
@@ -262,15 +267,15 @@ int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
     Metodo:
     Descripcion: este metodo permite eliminar los BinPackage
         que contiene la estructura de entrada, liberando asi
-        memoria.
+        la memoria.
     Parametros:
         -binPackages: estructura que contiene los BinPackage
             a eliminar.
     Retorno: Vacio.
 */
-void BinPackingSolver::deleteBinPackagesGenerated(std::unordered_map<std::string, BinPackage *> binPackages)
+void BinPackingSolver::deleteRemainingBinPackages(std::multimap<int, BinPackage *, std::greater<int>> binPackages)
 {
-    std::unordered_map<std::string, BinPackage *>::iterator itr;
+    std::multimap<int, BinPackage *, std::greater<int>>::iterator itr;
     for (itr = binPackages.begin(); itr != binPackages.end(); itr++)
     {
         delete itr->second;
