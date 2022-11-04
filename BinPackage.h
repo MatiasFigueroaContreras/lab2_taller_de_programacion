@@ -5,6 +5,12 @@
 #include <map>
 #include <algorithm>
 
+/*
+    Descripcion de la clase BinPackage:
+    Esta clase representa un conjunto de pesos,
+    considerando la misma capacidad maxima para cada uno
+    de estos.
+*/
 class BinPackage
 {
 private:
@@ -22,5 +28,4 @@ public:
     BinPackage *copy();
     std::string toString();
     void print();
-
 };

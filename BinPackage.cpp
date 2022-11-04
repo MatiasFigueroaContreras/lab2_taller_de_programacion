@@ -1,18 +1,12 @@
 #include "BinPackage.h"
-/*
-    Descripcion de la clase BinPackage:
-    Esta clase representa un conjunto de contenedores ("Bins"),
-    considerando la misma capacidad para un numero establecido
-    de contenedores.
-*/
 
 /*
     Metodo: Constructor
-    Descripcion: este metodo permite crear un conjunto de bins,
+    Descripcion: este metodo permite inicializar un conjunto de pesos en 0,
         con un largo maximo, y una capacidad establecida para los bins.
     Parametros:
-        -length: largo maximo del conjunto de bins.
-        -capacity: capacidad maxima de los bins pertenecientes al conjunto.
+        -length: largo maximo del conjunto de pesos.
+        -capacity: capacidad maxima de los pesos pertenecientes al conjunto.
     Retorno: La direccion del objeto creado.
 */
 BinPackage::BinPackage(int length, int capacity)
@@ -29,22 +23,18 @@ BinPackage::BinPackage(int length, int capacity)
 /*
     Metodo: Destructor
     Descripcion: este metodo permite eliminar el BinPackage,
-        liberando la memoria de los Bin que esta posee.
+        liberando la memoria de las estructuras usadas.
     Retorno: vacio.
 */
 BinPackage::~BinPackage()
 {
-    // std::vector<int>::iterator itr;
-    // for (itr = bins.begin(); itr != bins.end(); itr++)
-    // {
-    //     delete *itr;
-    // }
 }
 
 /*
     Metodo:
-    Descripcion: este metodo permite insertar un elemento
-        a un bin dado el indice de este.
+    Descripcion: este metodo permite insertar un elemento,
+        dado un indice, sumando el peso si es que no supera la
+        capacidad.
     Parametros:
         -element: elemento a agregar a un bin.
         -index: indice del bin al cual se agregara el elemento.
@@ -64,22 +54,20 @@ bool BinPackage::insert(int element, int index)
     {
         return false;
     }
-    bins[index] += element; 
 
-    auto node = binsOrdered.extract(key);
-    node.value() = bins[index];
-    binsOrdered.insert(std::move(node));
+    binsOrdered.erase(binsOrdered.find(key));
+    bins[index] += element;
+    binsOrdered.insert(bins[index]);
 
     return true;
 }
 
 /*
     Metodo:
-    Descripcion: este metodo permite insertar un nuevo
-        Bin vacio.
+    Descripcion: este metodo permite insertar/inicializar
+        un nuevo peso en 0.
     Parametros: No tiene.
     Retorno: No posee.
-
 */
 void BinPackage::insertBin()
 {
@@ -89,7 +77,11 @@ void BinPackage::insertBin()
 }
 
 /*
-    
+    Metodo:
+    Descripcion: este metodo permite obtener el valor de tipo
+        string que representa al BinPackage.
+    Parametros: No tiene.
+    Retorno: string que representa al BinPackage.
 */
 std::string BinPackage::getValue()
 {
@@ -125,9 +117,9 @@ BinPackage *BinPackage::copy()
 /*
     Metodo:
     Descripcion: este metodo permite representar el
-        Bin en un string, incluyendo el contenido de este.
+        BinPackage en un string, incluyendo el contenido de este.
     Retorno:
-        string, que representa el bin.
+        string, que representa el binPackage.
 */
 std::string BinPackage::toString()
 {

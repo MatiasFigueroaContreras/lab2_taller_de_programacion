@@ -1,11 +1,4 @@
 #include "BinPackingSolver.h"
-/*
-    Descripcion de la clase BinPackingSolver:
-    Esta clase buscara resolver un problema de Bin Packing
-    teniendo metodos referentes a la solucion del problema,
-    y ademas la generacion de elementos de prueba para
-    probar el solucionador.
-*/
 
 BinPackingSolver::BinPackingSolver()
 {
@@ -28,9 +21,11 @@ BinPackingSolver::~BinPackingSolver()
 int BinPackingSolver::solve(std::vector<int> elements, int capacity)
 {
     int mid;
+    int bef = -1;
+    bool befRes = true;
     std::sort(elements.begin(), elements.end(), std::greater<int>());
     std::cout << elements[0];
-    for (int i = 1; i < (int) elements.size(); i++)
+    for (std::size_t i = 1; i < elements.size(); i++)
     {
         std::cout << ", " << elements[i];
     }
@@ -43,20 +38,62 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
     while (upper > lower)
     {
         mid = (upper + lower) / 2;
-        if (hasSolution(elements, capacity, mid))
+        if (bef == mid)
         {
-            upper = mid;
+            // Verifica caso en que se repite el mid, para asi
+            //  evitar calcular dos veces para una misma capacidad
+            //  si existe solucion.
+            if (befRes)
+            {
+                upper = mid;
+            }
+            else
+            {
+                if (lower == mid)
+                {
+                    std::cout << elements[0];
+                    for (std::size_t i = 1; i < elements.size(); i++)
+                    {
+                        std::cout << ", " << elements[i];
+                    }
+                    std::cout << std::endl;
+                    return lower + 1;
+                }
+                lower = mid;
+            }
         }
         else
         {
-            if (lower == mid)
+            bef = mid;
+            if (hasSolution(elements, capacity, mid))
             {
-                return lower + 1;
+                upper = mid;
+                befRes = true;
             }
-
-            lower = mid;
+            else
+            {
+                if (lower == mid)
+                {
+                    std::cout << elements[0];
+                    for (std::size_t i = 1; i < elements.size(); i++)
+                    {
+                        std::cout << ", " << elements[i];
+                    }
+                    std::cout << std::endl;
+                    return lower + 1;
+                }
+                befRes = false;
+                lower = mid;
+            }
         }
     }
+
+    std::cout << elements[0];
+    for (std::size_t i = 1; i < elements.size(); i++)
+    {
+        std::cout << ", " << elements[i];
+    }
+    std::cout << std::endl;
 
     return lower;
 }
@@ -85,12 +122,28 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
     int currentPos;
     BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
 
-    for(int i = 0; i < (int) elements.size(); i++)
+    int elementsSize = (int)elements.size();
+    if(elementsSize > 0)
+    {
+        std::unordered_set<std::string> us;
+        us.reserve(1);
+        visitedCombinations.push_back(us);
+    }
+
+    if(elementsSize > 1)
+    {
+        std::unordered_set<std::string> us;
+        us.reserve(2);
+        visitedCombinations.push_back(us);
+    }
+
+    for (int i = 2; i < elementsSize; i++)
     {
         std::unordered_set<std::string> us;
         us.reserve(10000);
         visitedCombinations.push_back(us);
     }
+
 
     binPackagesToVisit.emplace(0, initialBP);
     visitedCombinations[0].insert(initialBP->getValue());
@@ -180,7 +233,8 @@ int BinPackingSolver::upperBound(std::vector<int> elements, int capacity)
 
     for (itr = elements.begin(); itr != elements.end(); itr++)
     {
-        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++);
+        for (j = 0; j < binPackage->length && !binPackage->insert(*itr, j); j++)
+            ;
 
         if (j == binPackage->length)
         {
@@ -265,7 +319,7 @@ int BinPackingSolver::lowerBound(std::vector<int> elements, int capacity)
 
 /*
     Metodo:
-    Descripcion: este metodo permite eliminar los BinPackage
+    Descripcion: este metodo permite eliminar los BinPackages
         que contiene la estructura de entrada, liberando asi
         la memoria.
     Parametros:

@@ -22,9 +22,5 @@ int main()
     sol = bps->solve(elements3, 100);
     std::cout << "Resultado elements 3: " << sol << std::endl;
 
-    std::vector<int> elementsp {9, 9, 9, 9, 9, 8, 8, 8, 8, 8, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 7, 7, 7, 7, 7, 1, 1, 1, 1, 1};
-    sol = bps->solve(elementsp, 20);
-    std::cout << "Resultado elements P: " << sol << std::endl;
-
     delete bps;
 }
