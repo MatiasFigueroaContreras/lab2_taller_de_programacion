@@ -96,14 +96,14 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
     BinPackage *currentBP, *copyBP, *initialBP = new BinPackage(numBins, capacity);
 
     int elementsSize = (int)elements.size();
-    if(elementsSize > 0)
+    if (elementsSize > 0)
     {
         std::unordered_set<std::string> us;
         us.reserve(1);
         visitedCombinations.push_back(us);
     }
 
-    if(elementsSize > 1)
+    if (elementsSize > 1)
     {
         std::unordered_set<std::string> us;
         us.reserve(2);
@@ -116,7 +116,6 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
         us.reserve(10000);
         visitedCombinations.push_back(us);
     }
-
 
     binPackagesToVisit.emplace(0, initialBP);
     visitedCombinations[0].insert(initialBP->getValue());
