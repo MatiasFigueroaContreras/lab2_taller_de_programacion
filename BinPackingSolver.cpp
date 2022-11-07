@@ -24,16 +24,8 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
     int bef = -1;
     bool befRes = true;
     std::sort(elements.begin(), elements.end(), std::greater<int>());
-    std::cout << elements[0];
-    for (std::size_t i = 1; i < elements.size(); i++)
-    {
-        std::cout << ", " << elements[i];
-    }
-    std::cout << std::endl;
     int upper = upperBound(elements, capacity);
     int lower = lowerBound(elements, capacity);
-
-    std::cout << "Cota superior: " << upper << ", Cota Inferior: " << lower << std::endl;
 
     while (upper > lower)
     {
@@ -51,12 +43,6 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
             {
                 if (lower == mid)
                 {
-                    std::cout << elements[0];
-                    for (std::size_t i = 1; i < elements.size(); i++)
-                    {
-                        std::cout << ", " << elements[i];
-                    }
-                    std::cout << std::endl;
                     return lower + 1;
                 }
                 lower = mid;
@@ -74,12 +60,6 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
             {
                 if (lower == mid)
                 {
-                    std::cout << elements[0];
-                    for (std::size_t i = 1; i < elements.size(); i++)
-                    {
-                        std::cout << ", " << elements[i];
-                    }
-                    std::cout << std::endl;
                     return lower + 1;
                 }
                 befRes = false;
@@ -87,13 +67,6 @@ int BinPackingSolver::solve(std::vector<int> elements, int capacity)
             }
         }
     }
-
-    std::cout << elements[0];
-    for (std::size_t i = 1; i < elements.size(); i++)
-    {
-        std::cout << ", " << elements[i];
-    }
-    std::cout << std::endl;
 
     return lower;
 }
@@ -147,28 +120,19 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
 
     binPackagesToVisit.emplace(0, initialBP);
     visitedCombinations[0].insert(initialBP->getValue());
-    std::cout << "========================================" << std::endl;
     while (!binPackagesToVisit.empty())
     {
         currentMapItr = binPackagesToVisit.begin();
         currentBP = currentMapItr->second;
         currentPos = currentMapItr->first;
-        std::cout << "------------------------" << std::endl;
-        std::cout << "Valor a ingresar:  " << elements[currentPos] << ", Bin Package a combinar:" << std::endl;
-        currentBP->print();
         binPackagesToVisit.erase(currentMapItr);
         for (int i = 0; i < currentBP->length; i++)
         {
             copyBP = currentBP->copy();
             if (copyBP->insert(elements[currentPos], i) && visitedCombinations[currentPos].insert(copyBP->getValue()).second)
             {
-                std::cout << "Combinacion Nueva nPos°" << i + 1 << ": " << std::endl;
-                copyBP->print();
                 if (currentPos + 1 == (int)elements.size())
                 {
-                    std::cout << "Si es posible con: " << numBins << " numero de bins" << std::endl;
-                    copyBP->print();
-                    std::cout << "========================================" << std::endl;
                     deleteRemainingBinPackages(binPackagesToVisit);
                     return true;
                 }
@@ -181,10 +145,7 @@ bool BinPackingSolver::hasSolution(std::vector<int> elements, int capacity, int 
             }
         }
         delete currentBP;
-        std::cout << "------------------------" << std::endl;
     }
-    std::cout << "No es posible con: " << numBins << " numero de bins" << std::endl;
-    std::cout << "========================================" << std::endl;
 
     return false;
 }

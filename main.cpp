@@ -17,7 +17,6 @@ int main()
     std::cin >> capacity;
     std::cout << "Ingrese cantidad de ciclos: ";
     std::cin >> N;
-    double ejecutionTimes[N];
     std::cout << "Se ejecutaran " << N << " ciclos" << std::endl;
     std::srand(time(NULL));
     for (int i = 0; i < N; i++)
@@ -30,19 +29,11 @@ int main()
         dt = (tf - ti) / (double)CLOCKS_PER_SEC;
         tavg += dt;
         std::cout << "Tiempo de ejecucion: " << dt << " segundos" << std::endl;
-        ejecutionTimes[i] = dt;
     }
 
     std::cout << "Tiempo promedio: " << tavg / N << " segundos" << std::endl;
-    std::cout << "Tiempos de Ejeucion: " << std::endl;
-    std::cout << ejecutionTimes[0];
-    for(int i = 1; i < N; i++)
-    {
-        std::cout << ", " << ejecutionTimes[i];
-    }
-    std::cout << std::endl;
 
-    // Estos se demoran mas
+    // Ejemplos que se demoran mas
     // 6 seg aprox
     // elements = {94, 92, 88, 88, 87, 86, 83, 83, 83, 79, 77, 77, 76, 70, 69, 65, 65, 64, 56, 54, 52, 52, 46, 45, 45, 43, 43, 41, 41, 40, 40, 36, 35, 33, 33, 30, 29, 28, 26, 25, 25, 23, 18, 18, 17, 17, 15, 11, 5, 1};
     // 25 seg aprox

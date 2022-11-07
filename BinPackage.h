@@ -2,8 +2,6 @@
 #include <vector>
 #include <set>
 #include <string>
-#include <map>
-#include <algorithm>
 
 /*
     Descripcion de la clase BinPackage:
